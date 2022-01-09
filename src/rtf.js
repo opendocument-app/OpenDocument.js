@@ -1,0 +1,166 @@
+function closeDoc(reset) {
+  $("#havemeta").hide();
+  $("#meta").empty();
+  $("#content").empty();
+  $("#dropzone").show();
+  $("#opened_doc").hide();
+  $("#closed_doc").show();
+  $("#tools").hide();
+  if (reset)
+    $("#samplecombo").val("");
+}
+function beginLoading() {
+  closeDoc(false);
+  $("#dropzone").hide();
+  $("#content").text("Loading...");
+}
+function setPictBorder(elem, show) {
+  return elem.css("border", show ? "1px dotted red" : "none");
+}
+function setUnsafeLink(elem, warn) {
+  return elem.css("border", warn ? "1px dashed red" : "none");
+}
+function displayRtfFile(blob) {
+  try {
+    var legacyPictures = $("#legacypicts").prop("checked");
+    var showPicBorder = $("#showpicborder").prop("checked");
+    var warnHttpLinks = $("#warnhttplink").prop("checked");
+    var settings = {
+      onPicture: function (isLegacy, create) {
+        // isLegacy is null if it's the only available picture (e.g. legacy rtf)
+        if (isLegacy === null || isLegacy === legacyPictures) {
+          var elem = $(create()).attr("class", "rtfpict"); // WHY does addClass not work on <svg>?!
+          return setPictBorder(elem, showPicBorder)[0];
+        }
+      },
+      onHyperlink: function (create, hyperlink) {
+        var url = hyperlink.url();
+        var lnk = create();
+        if (url.substr(0, 7) == "http://") {
+          // Wrap http:// links into a <span>
+          var span = setUnsafeLink($("<span>").addClass("unsafelink").append(lnk), warnHttpLinks);
+          span.click(function (evt) {
+            if ($("#warnhttplink").prop("checked")) {
+              evt.preventDefault();
+              alert("Unsafe link: " + url);
+              return false;
+            }
+          });
+          return {
+            content: lnk,
+            element: span[0]
+          };
+        } else {
+          return {
+            content: lnk,
+            element: lnk
+          };
+        }
+      },
+    };
+    var doc = new RTFJS.Document(blob, settings);
+    var haveMeta = false;
+    var meta = doc.metadata();
+    for (var prop in meta) {
+      $("#meta").append($("<div>").append($("<span>").text(prop + ": ")).append($("<span>").text(meta[prop].toString())));
+      haveMeta = true;
+    }
+    if (haveMeta)
+      $("#havemeta").show();
+    doc.render().then(html => {
+      $("#content").empty().append(html);
+      $("#closed_doc").hide();
+      $("#opened_doc").show();
+      $("#tools").show();
+      console.log("All done!");
+    }).catch(e => {
+      if (e instanceof RTFJS.Error) {
+        $("#content").text("Error: " + e.message);
+        throw e;
+      }
+      else {
+        throw e;
+      }
+    });
+  } catch (e) {
+    if (e instanceof RTFJS.Error) {
+      $("#content").text("Error: " + e.message);
+      throw e;
+    }
+    else {
+      throw e;
+    }
+  }
+}
+function stringToBinaryArray(string) {
+  var buffer = new ArrayBuffer(string.length);
+  var bufferView = new Uint8Array(buffer);
+  for (var i = 0; i < string.length; i++) {
+    bufferView[i] = string.charCodeAt(i);
+  }
+  return buffer;
+}
+function loadRtfFile(file) {
+  beginLoading();
+  $.ajax({
+    url: file,
+    dataType: "text",
+    processData: false,
+    success: function (result) {
+      displayRtfFile(stringToBinaryArray(result));
+    },
+    error: function (jqXHR, textStatus, errorThrown) {
+      $("#content").text("Error: " + errorThrown);
+    }
+  });
+}
+$(document).ready(function () {
+  $("#closebutton").click(function () {
+    closeDoc(true);
+  });
+  $("#samplecombo").change(function () {
+    var file = $(this).val();
+    if (file.length == 0) {
+      closeDoc(true);
+    } else {
+      loadRtfFile('../.common/data/rtf/' + $(this).val());
+    }
+  });
+  $("#showpicborder").change(function () {
+    var show = $(this).prop("checked");
+    $(".rtfpict").each(function () {
+      setPictBorder($(this), show);
+    });
+  });
+  $("#warnhttplink").change(function () {
+    var warn = $(this).prop("checked");
+    $(".unsafelink").each(function () {
+      setUnsafeLink($(this), warn);
+    });
+  });
+  $("#dropzone")
+    .on("drop", function (evt) {
+      evt.stopPropagation()
+      evt.preventDefault();
+
+      var files = evt.originalEvent.dataTransfer.files;
+      if (files.length > 1) {
+        alert("Please only drop one file!");
+      } else {
+        var reader = new FileReader();
+        reader.onload = function (evt) {
+          beginLoading();
+          setTimeout(function () {
+            displayRtfFile(evt.target.result);
+          }, 100);
+        };
+        reader.readAsArrayBuffer(files[0]);
+      }
+    })
+    .on("dragover", function (evt) {
+      evt.stopPropagation()
+      evt.preventDefault();
+    });
+
+  closeDoc(true);
+});

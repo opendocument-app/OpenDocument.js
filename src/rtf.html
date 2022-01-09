@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+
+    <script src="../.common/dep/jquery.min.js"></script>
+
+    <script src="../../dist/WMFJS.bundle.js"></script>
+    <script src="../../dist/EMFJS.bundle.js"></script>
+    <script src="../../dist/RTFJS.bundle.js"></script>
+</head>
+
+<body>
+    <div style="margin: 4pt;">
+        <span>
+            <form>
+                <span id="opened_doc" style="display: none;">
+                    <input id="closebutton" type="button" value="Close" />
+                </span>
+                <span id="closed_doc">
+                    <select id="samplecombo">
+                        <option selected="selected" value="">Drag&amp;Drop a RTF document</option>
+                        <option>simple1.rtf</option>
+                        <option>simple2.rtf</option>
+                        <option>simple3.rtf</option>
+                        <option>simple4.rtf</option>
+                        <option>simple5.rtf</option>
+                        <option>simplepict.rtf</option>
+                        <option>simplepng.rtf</option>
+                        <option>simplepngbin.rtf</option>
+                        <option>hyperlink.rtf</option>
+                    </select>
+                    <label><input id="legacypicts" type="checkbox" checked />Load legacy pictures</label>
+                </span>
+            </form>
+        </span>
+        <span id="tools" style="display: none;">
+            <label><input id="showpicborder" type="checkbox" />Picture border</label>
+            <label><input id="warnhttplink" type="checkbox" />Protect from unsafe links</label>
+        </span>
+    </div>
+    <div id="dropzone" style="display: inline-block; border-radius: 6pt; border: 2pt solid #dddddd; padding: 30pt;">
+        Drop an RTF document here
+    </div>
+    <div style="background-color:#f0ffff;display:none;" id="havemeta">
+        <div>Metadata:</div>
+        <div id="meta"></div>
+    </div>
+    <div id="content"></div>
+</body>
+
+</html>
