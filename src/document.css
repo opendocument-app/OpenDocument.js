@@ -14,6 +14,25 @@ x-s {
     display: inline;
 }
 
+.odr-background {
+    display: flex;
+    background-color: lightgray;
+}
+.odr-pages {
+    margin-left: auto;
+    margin-right: auto;
+    padding-top: 2cm;
+    padding-left: 2cm;
+    padding-right: 2cm;
+}
+.odr-page-outer {
+    display: flex;
+    background-color: white;
+    margin-bottom: 2cm;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 /* https://github.com/marcelblanarik/js-keyword-highlighter/blob/dd69436bee06f8c658abe1e12e2abb35d3bf250b/index.html#L81-L82 */
 mark { background: yellow; }
 mark.current { background: orange; }
