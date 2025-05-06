@@ -28,6 +28,7 @@ x-s {
 .odr-page-outer {
     display: flex;
     background-color: white;
+    z-index: -1000;
     margin-bottom: 2cm;
     margin-left: auto;
     margin-right: auto;
