@@ -1,19 +1,19 @@
 import * as error from './error';
 
-export function generateDiff() {
+export function generateDiff(): string {
   const result = {
     modifiedText: {},
-  };
+  } as { modifiedText: { [key: string]: string } };
   for (let [k, v] of Object.entries(editJournal['modifiedText'])) {
     result['modifiedText'][k] = v.innerText;
   }
   return JSON.stringify(result);
 }
 
-function mutation(mutations, observer) {
+function mutation(mutations: MutationRecord[], observer: MutationObserver) {
   for (let m of mutations) {
     if (m.type === 'characterData') {
-      const node = m.target.parentNode;
+      const node = m.target.parentNode as HTMLElement;
       const path = node.getAttribute('data-odr-path');
       if (path) {
         editJournal['modifiedText'][path] = node;
@@ -23,7 +23,7 @@ function mutation(mutations, observer) {
 }
 
 const editJournal = {
-  modifiedText: {},
+  modifiedText: {} as { [key: string]: HTMLElement },
 };
 
 const observer = new MutationObserver(mutation);

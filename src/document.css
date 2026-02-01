@@ -2,6 +2,7 @@
     margin: 0;
     position: relative;
 }
+
 body {
     padding: 5px;
 }
@@ -10,6 +11,7 @@ x-p {
     display: block;
     font-size: 0;
 }
+
 x-s {
     display: inline;
 }
@@ -18,6 +20,7 @@ x-s {
     display: flex;
     background-color: lightgray;
 }
+
 .odr-pages {
     margin-left: auto;
     margin-right: auto;
@@ -25,6 +28,7 @@ x-s {
     padding-left: 2cm;
     padding-right: 2cm;
 }
+
 .odr-page-outer {
     display: flex;
     background-color: white;
@@ -35,5 +39,10 @@ x-s {
 }
 
 /* https://github.com/marcelblanarik/js-keyword-highlighter/blob/dd69436bee06f8c658abe1e12e2abb35d3bf250b/index.html#L81-L82 */
-mark { background: yellow; }
-mark.current { background: orange; }
+mark {
+    background: yellow;
+}
+
+mark.current {
+    background: orange;
+}
