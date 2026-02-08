@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "build": "webpack --mode production",
-    "dev": "vite examples"
+    "dev": "vite"
   },
   "author": "",
   "license": "ISC",

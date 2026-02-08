@@ -6,13 +6,52 @@ type TextPosition = {
 };
 
 type ChangeType = "insertText" | "removeText";
-type RemoveMode = "forward" | "backward";
 
 type Change = {
     type: ChangeType;
     text: string;
     position: TextPosition;
 };
+
+type RemoveMode = "forward" | "backward";
+
+class History {
+    private past: Change[] = [];
+    private future: Change[] = [];
+
+    push(change: Change) {
+        this.past.push(change);
+        this.future = [];
+    }
+
+    canUndo() {
+        return this.past.length > 0;
+    }
+
+    canRedo() {
+        return this.future.length > 0;
+    }
+
+    undo(): Change | null {
+        if (this.past.length === 0) {
+            return null;
+        }
+
+        const lastChange = this.past.pop();
+        this.future.push(lastChange);
+        return lastChange;
+    }
+
+    redo(): Change | null {
+        if (this.future.length === 0) {
+            return null;
+        }
+
+        const nextChange = this.future.pop();
+        this.past.push(nextChange);
+        return nextChange;
+    }
+}
 
 function updateLineNumberHeight() {
     const nrCells = document.querySelectorAll<HTMLElement>(".odr-text-nr > div");
@@ -27,8 +66,7 @@ function updateLineNumberHeight() {
 
 const textNr = document.querySelector<HTMLElement>(".odr-text-nr");
 const textBody = document.querySelector<HTMLElement>(".odr-text-body");
-const changeHistory: Change[] = [];
-const changeFuture: Change[] = [];
+const changeHistory = new History();
 
 const resizeObserver = new ResizeObserver(entries => {
     updateLineNumberHeight();
@@ -255,23 +293,19 @@ function undoChange(change: Change) {
 }
 
 function undo() {
-    if (changeHistory.length === 0) {
+    if (!changeHistory.canUndo()) {
         return;
     }
-
-    const lastChange = changeHistory.pop();
+    const lastChange = changeHistory.undo();
     undoChange(lastChange);
-    changeFuture.push(lastChange);
 }
 
 function redo() {
-    if (changeFuture.length === 0) {
+    if (!changeHistory.canRedo()) {
         return;
     }
-
-    const nextChange = changeFuture.pop();
+    const nextChange = changeHistory.redo();
     doChange(nextChange);
-    changeHistory.push(nextChange);
 }
 
 function insertTextAction(text: string) {
@@ -293,7 +327,6 @@ function insertTextAction(text: string) {
         text: text,
         position: position,
     });
-    console.log("changeHistory", changeHistory);
 
     placeCursorAt(newPosition);
 }
