@@ -4,8 +4,9 @@ const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 
 module.exports = {
   entry: {
-    odr: './src/odr.ts',
-    odr_spreadsheet: './src/odr_spreadsheet.ts',
+    document: './src/frontend/document.ts',
+    spreadsheet: './src/frontend/spreadsheet.ts',
+    text: './src/frontend/text.ts',
   },
   output: {
     filename: '[name].js',

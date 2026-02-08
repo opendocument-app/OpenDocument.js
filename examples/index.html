@@ -1,0 +1,24 @@
+<!doctype html>
+<html>
+
+<body>
+    <h1>Examples</h1>
+    <ul id="list"></ul>
+
+    <script type="module">
+        const pages = import.meta.glob("./*.html", { eager: true, as: "url", });
+        console.log(pages);
+
+        const ul = document.getElementById("list");
+        Object.keys(pages)
+            .filter(p => !p.endsWith("index.html"))
+            .forEach(p => {
+                const name = p.replace("./", "");
+                const li = document.createElement("li");
+                li.innerHTML = `<a href="${name}">${name}</a>`;
+                ul.appendChild(li);
+            });
+    </script>
+</body>
+
+</html>

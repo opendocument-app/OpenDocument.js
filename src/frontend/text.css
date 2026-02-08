@@ -1,0 +1,32 @@
+.odr-text {
+    display: flex;
+    flex-direction: row;
+    font-family: monospace;
+}
+
+.odr-text-nr {
+    display: flex;
+    flex-direction: column;
+    text-align: right;
+    vertical-align: top;
+    color: #999999;
+    border-right: solid #999999;
+}
+
+.odr-text-body {
+    display: flex;
+    flex-direction: column;
+    padding-left: 5pt;
+    white-space: pre;
+}
+
+.odr-text-wrap {
+    white-space: break-spaces;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    flex-shrink: 1;
+}
+
+[contenteditable]:focus {
+    outline: none;
+}
